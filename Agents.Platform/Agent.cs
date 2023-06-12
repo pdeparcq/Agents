@@ -1,4 +1,6 @@
-﻿using Agents.Platform.Messages;
+﻿using Agents.Platform.Actions;
+using Agents.Platform.Events;
+using Agents.Platform.Messages;
 using Microsoft.Extensions.Logging;
 using Proto;
 using Proto.Timers;
@@ -24,6 +26,14 @@ namespace Agents.Platform
             {
                 if (context.Message is Started)
                 {
+                    context.System.EventStream.Subscribe<Fired>(f =>
+                    {
+                        if (f.AgentName == Name)
+                        {
+                            // Stop when fired
+                            context.StopAsync(context.Self);
+                        }
+                    });
                     context.Scheduler().RequestRepeatedly(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), context.Self,
                         new Tick());
                 }
@@ -46,7 +56,14 @@ namespace Agents.Platform
 
             if (BluePrint.Role == "Senior Developer")
             {
-                // TODO: hire or fire some juniors
+                actionsToTake.Add(new Execute
+                {
+                    ActionName = "Fire",
+                    ParameterValues = new Dictionary<string, string>()
+                    {
+                        {"Agent", Name}
+                    }
+                });
             }
 
             return await Task.FromResult(new Observation

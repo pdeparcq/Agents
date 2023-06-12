@@ -1,4 +1,5 @@
 ﻿using Agents.Platform.Actions;
+using Agents.Platform.Events;
 using Agents.Platform.Messages;
 using Microsoft.Extensions.Logging;
 using Proto;
@@ -45,6 +46,10 @@ namespace Agents.Platform
                     {
                         Hire(context, exec.ParameterValues["Role"]);
                     }
+                    if (action is Fire)
+                    {
+                        Fire(context, exec.ParameterValues["Agent"]);
+                    }
                 }
 
                 await Task.CompletedTask;
@@ -61,7 +66,9 @@ namespace Agents.Platform
 
         public void Fire(IContext context, string agentName)
         {
-           // TODO: fire based on name
+            _logger.LogInformation($"Firing {agentName}...");
+
+            context.System.EventStream.Publish(new Fired { AgentName = agentName });
         }
     }
 }
