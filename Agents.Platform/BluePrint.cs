@@ -1,4 +1,6 @@
-﻿namespace Agents.Platform
+﻿using Microsoft.Extensions.Logging;
+
+namespace Agents.Platform
 {
     public class BluePrint
     {
@@ -11,9 +13,9 @@
             Goal = goal;
         }
 
-        public Agent Construct(string name)
+        public Agent Construct(string name, ILogger logger)
         {
-            return new Agent(this, name);
+            return new Agent(this, name, logger);
         }
     }
 }

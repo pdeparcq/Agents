@@ -1,7 +1,6 @@
 ﻿using Agents.Platform;
 using Microsoft.Extensions.Logging;
 using Proto;
-using Proto.Logging;
 
 namespace Agents.Console
 {
@@ -19,11 +18,9 @@ namespace Agents.Console
             }));
             
             var system = new ActorSystem();
-            
-            var props = Props.FromProducer(() => new Team(new NameGenerator()));
-
-            system.Root.WithLoggingContext(Log.CreateLogger("Agents")).Spawn(props);
-
+            var logger = Log.CreateLogger("Agents");
+            var props = Props.FromProducer(() => new Team(new NameGenerator(), logger));
+            system.Root.WithLoggingContext(logger).Spawn(props);
             System.Console.ReadLine();
         }
     }

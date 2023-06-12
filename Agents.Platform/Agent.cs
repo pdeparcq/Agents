@@ -1,41 +1,46 @@
 ﻿using Agents.Platform.Messages;
+using Microsoft.Extensions.Logging;
 using Proto;
-using Proto.Logging;
 using Proto.Timers;
 
 namespace Agents.Platform
 {
     public class Agent : IActor
     {
+        private readonly ILogger _logger;
         public BluePrint BluePrint { get; }
         public string Name { get; }
 
-        public Agent(BluePrint bluePrint, string name)
+        public Agent(BluePrint bluePrint, string name, ILogger logger)
         {
+            _logger = logger;
             BluePrint = bluePrint;
             Name = name;
         }
 
         public async Task ReceiveAsync(IContext context)
         {
-            if (context.Message is Started)
+            using (_logger.BeginScope(this))
             {
-                context.Scheduler().RequestRepeatedly(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), context.Self,
-                    new Tick());
-            }
-            if (context.Message is Tick)
-            {
-                // Observe agent's environment
-                var observation = await Observe(context);
+                if (context.Message is Started)
+                {
+                    context.Scheduler().RequestRepeatedly(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), context.Self,
+                        new Tick());
+                }
+                if (context.Message is Tick)
+                {
+                    // Observe agent's environment
+                    var observation = await Observe(context);
 
-                // Act in the environment given the observation made
-                await Act(context, observation);
+                    // Act in the environment given the observation made
+                    await Act(context, observation);
+                }
             }
         }
 
         private async Task<Observation> Observe(IContext context)
         {
-            context.Logger()?.LogInformation("Observing...");
+            _logger.LogInformation($"Observing...");
 
             var actionsToTake = new List<Execute>();
 
@@ -52,7 +57,7 @@ namespace Agents.Platform
 
         private async Task Act(IContext context, Observation observation)
         {
-            context.Logger()?.LogInformation("Acting...");
+            _logger.LogInformation("Acting...");
 
             if (observation.ActionsToTake != null && context.Parent != null)
             {

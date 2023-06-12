@@ -1,5 +1,6 @@
 ﻿using Agents.Platform.Actions;
 using Agents.Platform.Messages;
+using Microsoft.Extensions.Logging;
 using Proto;
 
 namespace Agents.Platform
@@ -9,8 +10,9 @@ namespace Agents.Platform
         private readonly List<BluePrint> _bluePrints;
         private readonly List<IAgentAction> _actions;
         private readonly INameGenerator _nameGenerator;
+        private readonly ILogger _logger;
 
-        public Team(INameGenerator nameGenerator)
+        public Team(INameGenerator nameGenerator, ILogger logger)
         {
             _bluePrints = new List<BluePrint>
             {
@@ -23,32 +25,38 @@ namespace Agents.Platform
                 new Fire()
             };
             _nameGenerator = nameGenerator;
+            _logger = logger;
         }
 
         public async Task ReceiveAsync(IContext context)
         {
-            if (context.Message is Started)
+            using (_logger.BeginScope("Team"))
             {
-                // Hire some people to get the party started
-                Hire(context, "Senior Developer");
-            }
-            if (context.Message is Execute exec)
-            {
-                var action = _actions.Single(a => a.Name == exec.ActionName);
-
-                if (action is Hire)
+                if (context.Message is Started)
                 {
-                    Hire(context, exec.ParameterValues["Role"]);
+                    // Hire some people to get the party started
+                    Hire(context, "Senior Developer");
                 }
-            }
+                if (context.Message is Execute exec)
+                {
+                    var action = _actions.Single(a => a.Name == exec.ActionName);
 
-            await Task.CompletedTask;
+                    if (action is Hire)
+                    {
+                        Hire(context, exec.ParameterValues["Role"]);
+                    }
+                }
+
+                await Task.CompletedTask;
+            }
         }
 
         public void Hire(IContext context, string role)
         {
+            _logger.LogInformation($"Hiring {role}...");
+
             context.Spawn(Props.FromProducer(() =>
-                _bluePrints.Single(bp => bp.Role == role).Construct(_nameGenerator.GenerateName())));
+                _bluePrints.Single(bp => bp.Role == role).Construct(_nameGenerator.GenerateName(), _logger)));
         }
 
         public void Fire(IContext context, string agentName)
