@@ -13,8 +13,6 @@ public abstract class ActionBase : IAgentAction
     public string Name { get; }
     public List<Parameter> Parameters { get; }
 
-    public abstract Task Execute(IEnvironment environment, IDictionary<string, string> parameterValues);
-
     public override string ToString()
     {
         return $"{Category}.{Name}";

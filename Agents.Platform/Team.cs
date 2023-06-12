@@ -1,71 +1,59 @@
-﻿using System.Collections.Concurrent;
-using Agents.Platform.Actions;
-using Microsoft.Extensions.Logging;
+﻿using Agents.Platform.Actions;
+using Agents.Platform.Messages;
+using Proto;
 
 namespace Agents.Platform
 {
-    public class Team : IEnvironment
+    public class Team : IActor
     {
         private readonly List<BluePrint> _bluePrints;
         private readonly List<IAgentAction> _actions;
-        private readonly ConcurrentDictionary<Agent, Task?> _agents;
         private readonly INameGenerator _nameGenerator;
 
-        public ILogger Log { get; }
-
-        public IEnumerable<BluePrint> BluePrints => _bluePrints.AsEnumerable();
-
-        public IEnumerable<IAgentAction> Actions => _actions.AsEnumerable();
-
-        public IQueryable<Agent> Agents => _agents.Keys.AsQueryable();
-
-        public Team(ILogger log, IEnumerable<BluePrint> bluePrints, INameGenerator nameGenerator)
+        public Team(INameGenerator nameGenerator)
         {
-            Log = log;
-            _bluePrints = new List<BluePrint>(bluePrints);
+            _bluePrints = new List<BluePrint>
+            {
+                new BluePrint("Senior Developer", "Assist junior developers"),
+                new BluePrint("Junior Developer", "Produce working code")
+            };
             _actions = new List<IAgentAction>()
             {
-                new HireAction(),
-                new FireAction()
+                new Hire(),
+                new Fire()
             };
-            _agents = new ConcurrentDictionary<Agent, Task?>();
             _nameGenerator = nameGenerator;
         }
 
-        public void Hire(string role)
+        public async Task ReceiveAsync(IContext context)
         {
-            var bp = _bluePrints.SingleOrDefault(
-                bp => bp.Role.Equals(role, StringComparison.InvariantCultureIgnoreCase));
-
-            if (bp == null)
+            if (context.Message is Started)
             {
-                throw new ArgumentException($"No blueprint found for role {role}");
+                // Hire some people to get the party started
+                Hire(context, "Senior Developer");
+            }
+            if (context.Message is Execute exec)
+            {
+                var action = _actions.Single(a => a.Name == exec.ActionName);
+
+                if (action is Hire)
+                {
+                    Hire(context, exec.ParameterValues["Role"]);
+                }
             }
 
-            var agent = bp.Construct(_nameGenerator.GenerateName());
-            _agents[agent] = null; // Make sure key is already available so that run method knows that agent is there
-            _agents[agent] = agent.Run(this);
+            await Task.CompletedTask;
         }
 
-        public void Fire(string agentName)
+        public void Hire(IContext context, string role)
         {
-            var agent = _agents.Keys.SingleOrDefault(a => a.Name == agentName);
-
-            if (agent == null)
-            {
-                throw new ArgumentException($"No agent found with name {agentName}");
-            }
-
-            _agents.TryRemove(agent, out var t);
+            context.Spawn(Props.FromProducer(() =>
+                _bluePrints.Single(bp => bp.Role == role).Construct(_nameGenerator.GenerateName())));
         }
 
-        public async Task Work()
+        public void Fire(IContext context, string agentName)
         {
-            while(_agents.Values.Any(t => !t.IsCompleted))
-            {
-
-                await Task.WhenAll(_agents.Values);
-            }
+           // TODO: fire based on name
         }
     }
 }

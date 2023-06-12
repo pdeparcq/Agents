@@ -1,14 +1,9 @@
-﻿namespace Agents.Platform
-{
-    public class ActionToTake
-    {
-        public string Name { get; set; }
-        public IDictionary<string, string> ParameterValues { get; set; }
-    }
+﻿using Agents.Platform.Messages;
 
+namespace Agents.Platform
+{
     public class Observation
     {
-        public bool ShouldStop { get; set; }
-        public List<ActionToTake>? ActionsToTake { get; set; }
+        public List<Execute>? ActionsToTake { get; set; }
     }
 }

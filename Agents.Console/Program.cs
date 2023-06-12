@@ -1,31 +1,30 @@
 ﻿using Agents.Platform;
 using Microsoft.Extensions.Logging;
+using Proto;
+using Proto.Logging;
 
 namespace Agents.Console
 {
     internal class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
-            // Create a logger factory
-            var loggerFactory = LoggerFactory.Create(builder =>
+            Log.SetLoggerFactory(LoggerFactory.Create(builder =>
             {
                 builder.AddSimpleConsole(opt =>
                 {
                     opt.IncludeScopes = true;
                     opt.SingleLine = true;
-                }); // Configure the console logger
-            });
+                }).SetMinimumLevel(LogLevel.Debug); // Configure the console logger
+            }));
+            
+            var system = new ActorSystem();
+            
+            var props = Props.FromProducer(() => new Team(new NameGenerator()));
 
-            var team = new Team(loggerFactory.CreateLogger<Program>(), new List<BluePrint>
-            {
-                new BluePrint("Senior Developer", "Assist junior developers"),
-                new BluePrint("Junior Developer", "Produce working code")
-            }, new NameGenerator());
+            system.Root.WithLoggingContext(Log.CreateLogger("Agents")).Spawn(props);
 
-            team.Hire("Senior Developer");
-
-            await team.Work();
+            System.Console.ReadLine();
         }
     }
 }
