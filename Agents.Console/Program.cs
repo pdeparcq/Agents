@@ -1,4 +1,7 @@
 ﻿using Agents.Platform;
+using Agents.Platform.Actions;
+using Agents.Platform.BluePrints;
+using Agents.Platform.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Proto;
@@ -19,7 +22,7 @@ namespace Agents.Console
             var system = provider.GetRequiredService<ActorSystem>();
 
             // Get props for first agent
-            var props = system.DI().PropsFor<Agent>(new BluePrint("Manager", "Hire or fire agents"));
+            var props = system.DI().PropsFor<Agent>(new Manager());
 
             // Spawn that agent
             system.Root.Spawn(props);
@@ -30,8 +33,13 @@ namespace Agents.Console
 
         private static void ConfigureServices(ServiceCollection services)
         {
+            // Proto
             services.AddSingleton(serviceProvider => new ActorSystem().WithServiceProvider(serviceProvider));
+
+            // Services
             services.AddSingleton<INameGenerator>(sp => new NameGenerator());
+
+            // Logging
             services.AddLogging(builder =>
             {
                 builder.AddSimpleConsole(opt =>
@@ -40,6 +48,17 @@ namespace Agents.Console
                     opt.SingleLine = true;
                 }).SetMinimumLevel(LogLevel.Debug);
             });
+
+            // Blueprints
+            services.AddTransient<IBluePrint, Manager>();
+            services.AddTransient<IBluePrint, ProductOwner>();
+            services.AddTransient<IBluePrint, Developer>();
+
+            // Actions
+            services.AddTransient<IAction, Hire>();
+            services.AddTransient<IAction, Fire>();
+
+            // Agent
             services.AddTransient<Agent>();
         }
     }

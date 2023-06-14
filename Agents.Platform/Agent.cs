@@ -1,5 +1,7 @@
 ﻿using Agents.Platform.Actions;
+using Agents.Platform.BluePrints;
 using Agents.Platform.Messages;
+using Agents.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Proto;
 using Proto.Timers;
@@ -10,13 +12,13 @@ namespace Agents.Platform
     {
         private readonly ILogger<Agent> _logger;
 
-        private readonly IEnumerable<IAgentAction> _actions;
+        private readonly IEnumerable<IAction> _actions;
 
-        public BluePrint BluePrint { get; }
+        public IBluePrint BluePrint { get; }
 
         public string Name { get; }
 
-        public Agent(BluePrint bluePrint, INameGenerator nameGenerator, ILogger<Agent> logger, IEnumerable<IAgentAction> actions)
+        public Agent(IBluePrint bluePrint, INameGenerator nameGenerator, ILogger<Agent> logger, IEnumerable<IAction> actions)
         {
             _logger = logger;
             _actions = actions;
@@ -50,14 +52,14 @@ namespace Agents.Platform
 
             var actionsToTake = new List<ActionToTake>();
 
-            if (BluePrint.Role == "Senior Developer")
+            if (BluePrint.Role == "Manager")
             {
                 actionsToTake.Add(new ActionToTake
                 {
-                    ActionName = "Fire",
+                    ActionName = "Hire",
                     ParameterValues = new Dictionary<string, string>()
                     {
-                        {"Agent", Name}
+                        {"Role", "Developer"}
                     }
                 });
             }

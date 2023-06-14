@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-
-namespace Agents.Platform
+﻿namespace Agents.Platform.BluePrints
 {
-    public class BluePrint
+    public class BluePrint : IBluePrint
     {
         public string Role { get; }
         public string Goal { get; }

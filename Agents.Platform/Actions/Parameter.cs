@@ -1,4 +1,4 @@
-﻿namespace Agents.Platform
+﻿namespace Agents.Platform.Actions
 {
     public class Parameter
     {

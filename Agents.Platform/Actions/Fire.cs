@@ -2,7 +2,7 @@
 
 namespace Agents.Platform.Actions
 {
-    public class Fire : ActionBase
+    public class Fire : Action
     {
         public Fire() : base("Recruitment", "Fire", new Parameter
         {

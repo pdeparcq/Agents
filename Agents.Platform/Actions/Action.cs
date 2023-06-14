@@ -2,9 +2,9 @@
 
 namespace Agents.Platform.Actions;
 
-public abstract class ActionBase : IAgentAction
+public abstract class Action : IAction
 {
-    protected ActionBase(string category, string name, params Parameter[] parameters)
+    protected Action(string category, string name, params Parameter[] parameters)
     {
         Category = category;
         Name = name;

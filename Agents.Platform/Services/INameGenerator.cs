@@ -1,4 +1,4 @@
-﻿namespace Agents.Platform;
+﻿namespace Agents.Platform.Services;
 
 public interface INameGenerator
 {

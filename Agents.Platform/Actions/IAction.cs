@@ -2,7 +2,7 @@
 
 namespace Agents.Platform.Actions;
 
-public interface IAgentAction
+public interface IAction
 {
     string Category { get; }
     string Name { get; }
