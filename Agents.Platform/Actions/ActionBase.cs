@@ -1,4 +1,6 @@
-﻿namespace Agents.Platform;
+﻿using Proto;
+
+namespace Agents.Platform.Actions;
 
 public abstract class ActionBase : IAgentAction
 {
@@ -10,8 +12,12 @@ public abstract class ActionBase : IAgentAction
     }
 
     public string Category { get; }
+
     public string Name { get; }
+
     public List<Parameter> Parameters { get; }
+
+    public abstract Task Execute(IContext context, IDictionary<string, string> parameters);
 
     public override string ToString()
     {

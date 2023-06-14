@@ -13,5 +13,10 @@ namespace Agents.Platform.Actions
         })
         {
         }
+
+        public override Task Execute(IContext context, IDictionary<string, string> parameters)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Agents.Platform.Actions
+﻿using Proto;
+
+namespace Agents.Platform.Actions
 {
     public class Fire : ActionBase
     {
@@ -10,6 +12,11 @@
             Type = "string"
         })
         {
+        }
+
+        public override Task Execute(IContext context, IDictionary<string, string> parameters)
+        {
+            throw new NotImplementedException();
         }
     }
 }

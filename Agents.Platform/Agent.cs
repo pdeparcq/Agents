@@ -1,5 +1,4 @@
 ﻿using Agents.Platform.Actions;
-using Agents.Platform.Events;
 using Agents.Platform.Messages;
 using Microsoft.Extensions.Logging;
 using Proto;
@@ -9,15 +8,20 @@ namespace Agents.Platform
 {
     public class Agent : IActor
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<Agent> _logger;
+
+        private readonly IEnumerable<IAgentAction> _actions;
+
         public BluePrint BluePrint { get; }
+
         public string Name { get; }
 
-        public Agent(BluePrint bluePrint, string name, ILogger logger)
+        public Agent(BluePrint bluePrint, INameGenerator nameGenerator, ILogger<Agent> logger, IEnumerable<IAgentAction> actions)
         {
             _logger = logger;
+            _actions = actions;
             BluePrint = bluePrint;
-            Name = name;
+            Name = nameGenerator.GenerateName();
         }
 
         public async Task ReceiveAsync(IContext context)
@@ -26,14 +30,6 @@ namespace Agents.Platform
             {
                 if (context.Message is Started)
                 {
-                    context.System.EventStream.Subscribe<Fired>(f =>
-                    {
-                        if (f.AgentName == Name)
-                        {
-                            // Stop when fired
-                            context.StopAsync(context.Self);
-                        }
-                    });
                     context.Scheduler().RequestRepeatedly(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), context.Self,
                         new Tick());
                 }
@@ -52,11 +48,11 @@ namespace Agents.Platform
         {
             _logger.LogInformation($"Observing...");
 
-            var actionsToTake = new List<Execute>();
+            var actionsToTake = new List<ActionToTake>();
 
             if (BluePrint.Role == "Senior Developer")
             {
-                actionsToTake.Add(new Execute
+                actionsToTake.Add(new ActionToTake
                 {
                     ActionName = "Fire",
                     ParameterValues = new Dictionary<string, string>()
@@ -74,13 +70,29 @@ namespace Agents.Platform
 
         private async Task Act(IContext context, Observation observation)
         {
-            _logger.LogInformation("Acting...");
-
-            if (observation.ActionsToTake != null && context.Parent != null)
+            if (observation.ActionsToTake != null)
             {
                 foreach (var actionToTake in observation.ActionsToTake)
                 {
-                    context.Send(context.Parent, actionToTake);
+                    try
+                    {
+                        var action = _actions.SingleOrDefault(a => a.Name == actionToTake.ActionName);
+
+                        if (action != null)
+                        {
+                            _logger.LogInformation($"Executing {action}");
+
+                            await action.Execute(context, actionToTake.ParameterValues);
+                        }
+                        else
+                        {
+                            _logger.LogWarning($"No action found with name: {actionToTake.ActionName}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Failed to execute action {actionToTake.ActionName}");
+                    }
                 }
             }
             
