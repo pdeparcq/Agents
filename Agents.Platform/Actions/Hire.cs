@@ -23,7 +23,7 @@ namespace Agents.Platform.Actions
 
         public override Task Execute(IContext context, IDictionary<string, string> parameters)
         {
-            // TODO: check parameters in base class
+            // TODO: check required parameters in base class
 
             var bluePrint = _bluePrints.SingleOrDefault(bp => bp.Role == parameters["Role"]);
 

@@ -10,5 +10,7 @@
     public class Observation
     {
         public List<ActionToTake>? ActionsToTake { get; set; }
+
+        public string Reason { get; set; }
     }
 }

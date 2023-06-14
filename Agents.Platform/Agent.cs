@@ -1,7 +1,9 @@
 ﻿using Agents.Platform.Actions;
 using Agents.Platform.BluePrints;
 using Agents.Platform.Messages;
+using Agents.Platform.Properties;
 using Agents.Platform.Services;
+using HandlebarsDotNet;
 using Microsoft.Extensions.Logging;
 using Proto;
 using Proto.Timers;
@@ -16,12 +18,15 @@ namespace Agents.Platform
 
         public IBluePrint BluePrint { get; }
 
+        public ITeam Team { get; }
+
         public string Name { get; }
 
-        public Agent(IBluePrint bluePrint, INameGenerator nameGenerator, ILogger<Agent> logger, IEnumerable<IAction> actions)
+        public Agent(IBluePrint bluePrint, INameGenerator nameGenerator, ILogger<Agent> logger, IEnumerable<IAction> actions, ITeam team)
         {
             _logger = logger;
             _actions = actions;
+            Team = team;
             BluePrint = bluePrint;
             Name = nameGenerator.GenerateName();
         }
@@ -32,6 +37,10 @@ namespace Agents.Platform
             {
                 if (context.Message is Started)
                 {
+                    // Register agent to team
+                    Team.Register(this, context.Self);
+
+                    // Schedule ticks
                     context.Scheduler().RequestRepeatedly(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), context.Self,
                         new Tick());
                 }
@@ -43,6 +52,11 @@ namespace Agents.Platform
                     // Act in the environment given the observation made
                     await Act(context, observation);
                 }
+                if (context.Message is Stopped)
+                {
+                    // UnRegister agent from team
+                    Team.UnRegister(this);
+                }
             }
         }
 
@@ -50,24 +64,11 @@ namespace Agents.Platform
         {
             _logger.LogInformation($"Observing...");
 
-            var actionsToTake = new List<ActionToTake>();
+            var prompt = GeneratePrompt();
 
-            if (BluePrint.Role == "Manager")
-            {
-                actionsToTake.Add(new ActionToTake
-                {
-                    ActionName = "Hire",
-                    ParameterValues = new Dictionary<string, string>()
-                    {
-                        {"Role", "Developer"}
-                    }
-                });
-            }
+            _logger.LogInformation(prompt);
 
-            return await Task.FromResult(new Observation
-            {
-                ActionsToTake = actionsToTake
-            });
+            return await Complete(prompt);
         }
 
         private async Task Act(IContext context, Observation observation)
@@ -99,6 +100,40 @@ namespace Agents.Platform
             }
             
             await Task.CompletedTask;
+        }
+
+        private string GeneratePrompt()
+        {
+            var template = Handlebars.Compile(Resources.PromptTemplate);
+
+            return template(this);
+        }
+
+        private Task<Observation> Complete(string prompt)
+        {
+            if (BluePrint.Role == "Manager")
+            {
+                return Task.FromResult(new Observation
+                {
+                    ActionsToTake = new List<ActionToTake>()
+                    {
+                        new()
+                        {
+                            ActionName = "Hire",
+                            ParameterValues = new Dictionary<string, string>
+                            {
+                                { "Role", "Developer" }
+                            }
+                        }
+                    },
+                    Reason = "Need more developers"
+                });
+            }
+
+            return Task.FromResult(new Observation
+            {
+                Reason = "Nothing to do"
+            });
         }
 
         public override string ToString()

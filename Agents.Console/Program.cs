@@ -45,7 +45,7 @@ namespace Agents.Console
                 builder.AddSimpleConsole(opt =>
                 {
                     opt.IncludeScopes = true;
-                    opt.SingleLine = true;
+                    opt.SingleLine = false;
                 }).SetMinimumLevel(LogLevel.Debug);
             });
 
@@ -57,6 +57,9 @@ namespace Agents.Console
             // Actions
             services.AddTransient<IAction, Hire>();
             services.AddTransient<IAction, Fire>();
+
+            // Team
+            services.AddSingleton<ITeam, Team>();
 
             // Agent
             services.AddTransient<Agent>();
