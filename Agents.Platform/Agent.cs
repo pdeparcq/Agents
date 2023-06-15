@@ -1,9 +1,11 @@
-﻿using Agents.Platform.Actions;
+﻿using System.Text.Json.Serialization;
+using Agents.Platform.Actions;
 using Agents.Platform.BluePrints;
 using Agents.Platform.Messages;
 using Agents.Platform.Services;
 using HandlebarsDotNet;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Proto;
 using Proto.Timers;
 
@@ -33,6 +35,30 @@ namespace Agents.Platform
         public ITeam Team { get; }
 
         public string Name { get; }
+
+        public string ExampleObservation
+        {
+            get
+            {
+                var observation = new Observation
+                {
+                    ActionsToTake = new List<ActionToTake>
+                    {
+                        new ActionToTake
+                        {
+                            ActionName = "Hire",
+                            ParameterValues = new Dictionary<string, string>
+                            {
+                                { "Role", "Developer" }
+                            }
+                        }
+                    },
+                    Reason = "Need more developers!"
+                };
+
+                return JsonConvert.SerializeObject(observation, Formatting.Indented);
+            }
+        }
 
         public IEnumerable<IAction> Actions => _actions.Where(a => BluePrint.Actions.Contains(a.Name));
 

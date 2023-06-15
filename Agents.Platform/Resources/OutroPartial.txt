@@ -5,3 +5,9 @@ Here are the actions you can take with their parameters:
 		* {{Name}}: {{Type}} --> {{Description}} ({{#if IsRequired}}required{{else}}optional{{/if}})
 	{{/each}}
 {{/each}}
+
+You can take zero or more actions
+Always provide a reason why you take those actions, also when no action is taken!
+
+Here is an example how you should respond in json format:
+{{{ExampleObservation}}}
