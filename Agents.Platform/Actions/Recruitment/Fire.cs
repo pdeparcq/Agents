@@ -1,6 +1,6 @@
 ﻿using Proto;
 
-namespace Agents.Platform.Actions
+namespace Agents.Platform.Actions.Recruitment
 {
     public class Fire : Action
     {

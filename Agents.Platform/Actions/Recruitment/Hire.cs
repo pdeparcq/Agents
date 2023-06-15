@@ -3,20 +3,20 @@ using Microsoft.Extensions.Logging;
 using Proto;
 using Proto.DependencyInjection;
 
-namespace Agents.Platform.Actions
+namespace Agents.Platform.Actions.Recruitment
 {
     public class Hire : Action
     {
         private readonly IEnumerable<IBluePrint> _bluePrints;
-        
-        public Hire(IEnumerable<IBluePrint> bluePrints) 
+
+        public Hire(IEnumerable<IBluePrint> bluePrints)
             : base("Recruitment", "Hire", new Parameter
-        {
-            Name = "Role",
-            Description = "Role of agent to hire defined in its blueprint",
-            Type = "string",
-            IsRequired = true
-        })
+            {
+                Name = "Role",
+                Description = "Role of agent to hire defined in its blueprint",
+                Type = "string",
+                IsRequired = true
+            })
         {
             _bluePrints = bluePrints;
         }

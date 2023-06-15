@@ -1,5 +1,6 @@
 ﻿using Agents.Platform;
 using Agents.Platform.Actions;
+using Agents.Platform.Actions.Recruitment;
 using Agents.Platform.BluePrints;
 using Agents.Platform.Services;
 using Microsoft.Extensions.DependencyInjection;

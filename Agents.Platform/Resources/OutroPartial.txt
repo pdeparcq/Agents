@@ -1,4 +1,4 @@
-Here are the actions you can take with their parameters:
+Here are the possible actions you can take with their parameters:
 {{#each Actions}}
 	* {{Name}}:
 	{{#each Parameters}}

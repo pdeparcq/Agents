@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Agents.Platform.Actions;
+﻿using Agents.Platform.Actions;
 using Agents.Platform.BluePrints;
 using Agents.Platform.Messages;
 using Agents.Platform.Services;
@@ -98,6 +97,7 @@ namespace Agents.Platform
             var prompt = GeneratePrompt();
 
             _logger.LogInformation(prompt);
+            _logger.LogWarning($"Words in prompt: {WordCount(prompt)}");
 
             return await Complete(prompt);
         }
@@ -144,6 +144,12 @@ namespace Agents.Platform
             {
                 Reason = "Nothing to do"
             });
+        }
+
+        private int WordCount(string prompt)
+        {
+            var delimiters = new char[] { ' ', '\r', '\n' };
+            return prompt.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;
         }
 
         public override string ToString()
