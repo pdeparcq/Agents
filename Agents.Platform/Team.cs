@@ -1,4 +1,6 @@
 ﻿using System.Collections.Concurrent;
+using Agents.Platform.Properties;
+using HandlebarsDotNet;
 using Proto;
 
 namespace Agents.Platform
@@ -12,6 +14,10 @@ namespace Agents.Platform
         public Team()
         {
             _agents = new ConcurrentDictionary<Agent, PID>();
+
+            // Register partials
+            Handlebars.RegisterTemplate("intro", Resources.IntroPartial);
+            Handlebars.RegisterTemplate("outro", Resources.OutroPartial);
         }
 
         public void Register(Agent agent, PID pid)

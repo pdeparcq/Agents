@@ -118,7 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="PromptTemplate" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PromptTemplate.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="DeveloperTemplate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DeveloperTemplate.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="IntroPartial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\IntroPartial.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ManagerTemplate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ManagerTemplate.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="OutroPartial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\OutroPartial.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ProductOwnerTemplate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ProductOwnerTemplate.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

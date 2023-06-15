@@ -61,11 +61,60 @@ namespace Agents.Platform.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to {{&gt; intro}}
+        ///Custom developer stuff
+        ///{{&gt; outro}}.
         /// </summary>
-        internal static string PromptTemplate {
+        internal static string DeveloperTemplate {
             get {
-                return ResourceManager.GetString("PromptTemplate", resourceCulture);
+                return ResourceManager.GetString("DeveloperTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are a {{BluePrint.Role}} named {{Name}}
+        ///
+        ///Your overal goal is: {{BluePrint.Goal}}
+        ///
+        ///Here are all team members (including yourself):
+        ///{{#each Team.Agents}}
+        ///	* {{BluePrint.Role}} named {{Name}}
+        ///{{/each}}.
+        /// </summary>
+        internal static string IntroPartial {
+            get {
+                return ResourceManager.GetString("IntroPartial", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {{&gt; intro}}
+        ///Custom manager stuff
+        ///{{&gt; outro}}.
+        /// </summary>
+        internal static string ManagerTemplate {
+            get {
+                return ResourceManager.GetString("ManagerTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TODO OUTRO.
+        /// </summary>
+        internal static string OutroPartial {
+            get {
+                return ResourceManager.GetString("OutroPartial", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {{&gt; intro}}
+        ///Custom product owner stuff
+        ///{{&gt; outro}}.
+        /// </summary>
+        internal static string ProductOwnerTemplate {
+            get {
+                return ResourceManager.GetString("ProductOwnerTemplate", resourceCulture);
             }
         }
     }

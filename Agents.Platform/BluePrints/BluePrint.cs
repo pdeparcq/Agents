@@ -1,11 +1,14 @@
 ﻿namespace Agents.Platform.BluePrints
 {
-    public class BluePrint : IBluePrint
+    public abstract class BluePrint : IBluePrint
     {
         public string Role { get; }
-        public string Goal { get; }
         
-        public BluePrint(string role, string goal)
+        public string Goal { get; }
+
+        public abstract string? PromptTemplate { get; }
+        
+        protected BluePrint(string role, string goal)
         {
             Role = role;
             Goal = goal;

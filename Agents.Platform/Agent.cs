@@ -22,6 +22,8 @@ namespace Agents.Platform
 
         public string Name { get; }
 
+        private readonly HandlebarsTemplate<object, object> _promptTemplate;
+
         public Agent(IBluePrint bluePrint, INameGenerator nameGenerator, ILogger<Agent> logger, IEnumerable<IAction> actions, ITeam team)
         {
             _logger = logger;
@@ -29,6 +31,8 @@ namespace Agents.Platform
             Team = team;
             BluePrint = bluePrint;
             Name = nameGenerator.GenerateName();
+
+            _promptTemplate = Handlebars.Compile(BluePrint.PromptTemplate);
         }
 
         public async Task ReceiveAsync(IContext context)
@@ -104,9 +108,7 @@ namespace Agents.Platform
 
         private string GeneratePrompt()
         {
-            var template = Handlebars.Compile(Resources.PromptTemplate);
-
-            return template(this);
+            return _promptTemplate(this);
         }
 
         private Task<Observation> Complete(string prompt)
