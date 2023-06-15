@@ -1,3 +1,5 @@
 {{> intro}}
-Custom product owner stuff
+
+You are an extrovert and love to communicate with all stakeholders
+
 {{> outro}}

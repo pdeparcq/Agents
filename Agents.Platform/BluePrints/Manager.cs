@@ -9,5 +9,7 @@ namespace Agents.Platform.BluePrints
         }
 
         public override string? PromptTemplate => Resources.ManagerTemplate;
+
+        public override IEnumerable<string> Actions => new List<string> { "Hire", "Fire" };
     }
 }

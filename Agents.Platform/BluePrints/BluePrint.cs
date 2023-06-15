@@ -7,7 +7,9 @@
         public string Goal { get; }
 
         public abstract string? PromptTemplate { get; }
-        
+
+        public abstract IEnumerable<string> Actions { get; }
+
         protected BluePrint(string role, string goal)
         {
             Role = role;

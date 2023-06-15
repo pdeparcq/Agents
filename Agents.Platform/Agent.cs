@@ -1,7 +1,6 @@
 ﻿using Agents.Platform.Actions;
 using Agents.Platform.BluePrints;
 using Agents.Platform.Messages;
-using Agents.Platform.Properties;
 using Agents.Platform.Services;
 using HandlebarsDotNet;
 using Microsoft.Extensions.Logging;
@@ -16,12 +15,6 @@ namespace Agents.Platform
 
         private readonly IEnumerable<IAction> _actions;
 
-        public IBluePrint BluePrint { get; }
-
-        public ITeam Team { get; }
-
-        public string Name { get; }
-
         private readonly HandlebarsTemplate<object, object> _promptTemplate;
 
         public Agent(IBluePrint bluePrint, INameGenerator nameGenerator, ILogger<Agent> logger, IEnumerable<IAction> actions, ITeam team)
@@ -34,6 +27,14 @@ namespace Agents.Platform
 
             _promptTemplate = Handlebars.Compile(BluePrint.PromptTemplate);
         }
+
+        public IBluePrint BluePrint { get; }
+
+        public ITeam Team { get; }
+
+        public string Name { get; }
+
+        public IEnumerable<IAction> Actions => _actions.Where(a => BluePrint.Actions.Contains(a.Name));
 
         public async Task ReceiveAsync(IContext context)
         {
@@ -113,25 +114,6 @@ namespace Agents.Platform
 
         private Task<Observation> Complete(string prompt)
         {
-            if (BluePrint.Role == "Manager")
-            {
-                return Task.FromResult(new Observation
-                {
-                    ActionsToTake = new List<ActionToTake>()
-                    {
-                        new()
-                        {
-                            ActionName = "Hire",
-                            ParameterValues = new Dictionary<string, string>
-                            {
-                                { "Role", "Developer" }
-                            }
-                        }
-                    },
-                    Reason = "Need more developers"
-                });
-            }
-
             return Task.FromResult(new Observation
             {
                 Reason = "Nothing to do"

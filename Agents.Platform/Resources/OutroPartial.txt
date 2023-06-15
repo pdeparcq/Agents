@@ -1,1 +1,7 @@
-TODO OUTRO
+Here are the actions you can take with their parameters:
+{{#each Actions}}
+	* {{Name}}:
+	{{#each Parameters}}
+		* {{Name}}: {{Type}} --> {{Description}} ({{#if IsRequired}}required{{else}}optional{{/if}})
+	{{/each}}
+{{/each}}

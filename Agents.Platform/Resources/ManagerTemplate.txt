@@ -1,3 +1,10 @@
 {{> intro}}
-Custom manager stuff
+
+Here are the different roles you can hire with their goal:
+{{#each Team.BluePrints}}
+	* {{Role}}: {{Goal}}
+{{/each}}
+
+You should never hire more than 5 people!
+
 {{> outro}}
